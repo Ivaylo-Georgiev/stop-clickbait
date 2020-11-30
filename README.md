@@ -8,6 +8,10 @@ STOP CLICKBAIT е уеб приложение за разкриване на с�
 
 Идеята е вдъхновена от Facebook страницата [Stop Clickait](https://www.facebook.com/StopClickBaitOfficial)
 
+### Технологии
+**Back-end:** Express.js, MongoDB  
+**Front-end:** HTML, CSS, JavaScript 
+
 ### Функционалности
 #### Задължителни
  * Докладване на статия  
