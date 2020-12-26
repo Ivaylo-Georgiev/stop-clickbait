@@ -27,15 +27,12 @@ function displayDetectionResults(title, isClickbait) {
     let titleH1 = document.createElement('h1');
     titleH1.innerHTML = title;
     let detectionResultH2 = document.createElement('h2');
-    let detectionResultImg = document.createElement('img')
     if (isClickbait) {
-        detectionResultH2.innerHTML = 'Sounds a lot like a clickbait';
+        detectionResultH2.innerHTML = '✅ Sounds a lot like a clickbait';
         detectionResultH2.classList.add('green');
-        detectionResultImg.setAttribute('src', '../resources/verify.png');
     } else {
-        detectionResultH2.innerHTML = 'Doesn\'t really sound like a clickbait';
+        detectionResultH2.innerHTML = '❌ Doesn\'t really sound like a clickbait';
         detectionResultH2.classList.add('red');
-        detectionResultImg.setAttribute('src', '../resources/deny.png');
     }
     let detectAnotherTitleButton = document.createElement('a');
     detectAnotherTitleButton.classList.add('button');
@@ -43,7 +40,6 @@ function displayDetectionResults(title, isClickbait) {
     detectAnotherTitleButton.innerHTML = 'Detect another title';
     detectAnotherTitleButton.setAttribute('href', './detectClickbait');
     textContainer.appendChild(titleH1);
-    textContainer.appendChild(detectionResultImg);
     textContainer.appendChild(detectionResultH2);
     detectClickbaitContainer.appendChild(textContainer);
     detectClickbaitContainer.appendChild(detectAnotherTitleButton);

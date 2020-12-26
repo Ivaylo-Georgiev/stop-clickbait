@@ -1,0 +1,2 @@
+const revealClickbaitButton = document.querySelector('#reveal-clickbait-button');
+revealClickbaitButton.setAttribute('href', '/user/revealClickbait?username=' + username + '&accessToken=' + accessToken);
