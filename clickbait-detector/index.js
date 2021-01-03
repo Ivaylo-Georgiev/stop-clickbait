@@ -2,6 +2,14 @@ const fs = require('fs');
 
 const clickbaitDataSource = 'resources/datasets/clickbait_data';
 const nonClickbaitDataSource = 'resources/datasets/non_clickbait_data';
+const stopwordsDataSource = 'resources/datasets/stopwords';
+
+function extractStopwords() {
+    return fs.promises.readFile(stopwordsDataSource, 'utf8')
+        .then(stopwordsData => {
+            return stopwordsData.split('\r\n');
+        });
+}
 
 function clean(word) {
     if (word.startsWith('\"') || word.startsWith('\'')) {
@@ -19,12 +27,16 @@ function clean(word) {
     return word;
 }
 
-function extractClickbaitData() {
+function extractClickbaitData(stopwords) {
     return fs.promises.readFile(clickbaitDataSource, 'utf8')
         .then(clickbaitData => {
             let clickbaitWordsFrequency = {};
             const words = clickbaitData.toLowerCase().split(/[\n ]+/);
             words.forEach(function (word) {
+                if (stopwords.includes(word)) {
+                    return;
+                }
+
                 word = clean(word);
 
                 if (clickbaitWordsFrequency[word]) {
@@ -38,12 +50,16 @@ function extractClickbaitData() {
         });
 }
 
-function extractNonClickbaitData() {
+function extractNonClickbaitData(stopwords) {
     return fs.promises.readFile(nonClickbaitDataSource, 'utf8')
         .then(nonClickbaitData => {
             let nonClickbaitWordsFrequency = {};
             const words = nonClickbaitData.toLowerCase().split(/[\n ]+/);
             words.forEach(function (word) {
+                if (stopwords.includes(word)) {
+                    return;
+                }
+
                 word = clean(word);
 
                 if (nonClickbaitWordsFrequency[word]) {
@@ -66,19 +82,15 @@ function countWords(wordsData) {
     return wordsCount;
 }
 
-function calcClickbaitProbability(words, clickbaitFrequency, clickbaitWordsCount, totalWordsCount) {
+function calcClickbaitProbability(words, clickbaitFrequency, nonClickbaitFrequency, clickbaitWordsCount, totalWordsCount) {
     let titleClickbaitProbability = 1;
     for (let word of words) {
         word = clean(word);
-        if (clickbaitFrequency[word]) {
+        if (clickbaitFrequency[word] && nonClickbaitFrequency[word]) {
             let wordClickbaitProbability = clickbaitFrequency[word] / clickbaitWordsCount;
-            if (wordClickbaitProbability !== 0) {
-                titleClickbaitProbability *= wordClickbaitProbability;
-            } else {
-                titleClickbaitProbability *= 0.5;
-            }
+            titleClickbaitProbability *= wordClickbaitProbability;
         } else {
-            titleClickbaitProbability *= 0.5;
+            continue;
         }
     }
 
@@ -86,19 +98,15 @@ function calcClickbaitProbability(words, clickbaitFrequency, clickbaitWordsCount
 }
 
 
-function calcNonClickbaitProbability(words, nonClickbaitFrequency, nonClickbaitWordsCount, totalWordsCount) {
+function calcNonClickbaitProbability(words, nonClickbaitFrequency, clickbaitFrequency, nonClickbaitWordsCount, totalWordsCount) {
     let titleNonClickbaitProbability = 1;
     for (let word of words) {
         word = clean(word);
-        if (nonClickbaitFrequency[word]) {
+        if (nonClickbaitFrequency[word] && clickbaitFrequency[word]) {
             let wordNonClickbaitProbability = nonClickbaitFrequency[word] / nonClickbaitWordsCount;
-            if (wordNonClickbaitProbability !== 0) {
-                titleNonClickbaitProbability *= wordNonClickbaitProbability;
-            } else {
-                titleNonClickbaitProbability *= 0.5;
-            }
+            titleNonClickbaitProbability *= wordNonClickbaitProbability;
         } else {
-            titleNonClickbaitProbability *= 0.5;
+            continue;
         }
     }
 
@@ -106,35 +114,43 @@ function calcNonClickbaitProbability(words, nonClickbaitFrequency, nonClickbaitW
 }
 
 function isClickbait(title) {
-    const clickbaitData = extractClickbaitData();
-    const nonClickbaitData = extractNonClickbaitData();
+    return extractStopwords()
+        .then(stopwords => {
+            const clickbaitData = extractClickbaitData(stopwords);
+            const nonClickbaitData = extractNonClickbaitData(stopwords);
 
-    return Promise.all([clickbaitData, nonClickbaitData])
-        .then(frequencies => {
-            const clickbaitFrequency = frequencies[0];
-            const nonClickbaitFrequency = frequencies[1];
+            return Promise.all([clickbaitData, nonClickbaitData])
+                .then(frequencies => {
+                    const clickbaitFrequency = frequencies[0];
+                    const nonClickbaitFrequency = frequencies[1];
 
-            const clickbaitWordsCount = countWords(clickbaitFrequency);
-            const nonClickbaitWordsCount = countWords(nonClickbaitFrequency);
-            const totalWordsCount = clickbaitWordsCount + nonClickbaitWordsCount;
+                    const clickbaitWordsCount = countWords(clickbaitFrequency);
+                    const nonClickbaitWordsCount = countWords(nonClickbaitFrequency);
+                    const totalWordsCount = clickbaitWordsCount + nonClickbaitWordsCount;
 
-            const words = title.toLowerCase().split(' ');
+                    const words = title.toLowerCase().split(' ');
 
-            let clickbaitProbability = calcClickbaitProbability(words, clickbaitFrequency, clickbaitWordsCount, totalWordsCount);
-            let nonClickbaitProbability = calcNonClickbaitProbability(words, nonClickbaitFrequency, nonClickbaitWordsCount, totalWordsCount);
+                    let clickbaitProbability = calcClickbaitProbability(words, clickbaitFrequency, nonClickbaitFrequency, clickbaitWordsCount, totalWordsCount);
+                    let nonClickbaitProbability = calcNonClickbaitProbability(words, nonClickbaitFrequency, clickbaitFrequency, nonClickbaitWordsCount, totalWordsCount);
 
-            const probabilities = {
-                clickbaitProbability: clickbaitProbability,
-                nonClickbaitProbability: nonClickbaitProbability
-            }
+                    const probabilities = {
+                        clickbaitProbability: clickbaitProbability,
+                        nonClickbaitProbability: nonClickbaitProbability
+                    }
 
-            return probabilities;
-        }).then(probabilities => {
-            if (probabilities.clickbaitProbability > probabilities.nonClickbaitProbability) {
-                return true;
-            }
-            return false;
-        });
+                    console.log(probabilities);
+
+                    return probabilities;
+                }).then(probabilities => {
+                    if (probabilities.clickbaitProbability > probabilities.nonClickbaitProbability) {
+                        return true;
+                    }
+                    return false;
+                });
+        })
+
+
+
 }
 
 module.exports.isClickbait = isClickbait;
