@@ -90,6 +90,10 @@ app.get('/user/feed', auth.authenticateJWTQueryString, function (req, res) {
     res.sendFile(path.join(__dirname, '/html/userFeed.html'));
 })
 
+app.get('/user/profile', auth.authenticateJWTQueryString, function (req, res) {
+    res.sendFile(path.join(__dirname, '/html/profile.html'));
+})
+
 app.get('/user/revealClickbait', auth.authenticateJWTQueryString, function (req, res) {
     res.sendFile(path.join(__dirname, '/html/revealClickbait.html'));
 })
@@ -117,6 +121,16 @@ app.get('/article/all', (req, res) => {
         .catch(err => {
             console.error(`Failed to get all articles: ${err}`);
             res.send('Failed to get all articles');
+        });
+})
+
+app.get('/article/all/for', (req, res) => {
+    queries.getAllArticlesFor(req.query.username)
+        .toArray()
+        .then((articles) => res.send(articles))
+        .catch(err => {
+            console.error(`Failed to get all articles for ${user}: ${err}`);
+            res.send(`Failed to get all articles for ${user}`);
         });
 })
 
