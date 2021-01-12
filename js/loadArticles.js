@@ -1,8 +1,7 @@
-function loadArticles(forUserOnly) {
-    let url = '/article/all'
-    if (forUserOnly) {
-        url += '/for?username=' + username;
-    }
+function loadArticles(forUserOnly, orderedBy) {
+    clearArticles();
+
+    let url = constructUrlToFetchArticles(forUserOnly, orderedBy);
 
     fetch(url, { method: 'GET' })
         .then(response => {
@@ -13,6 +12,29 @@ function loadArticles(forUserOnly) {
                     markUserVotes();
                 });
         });
+}
+
+function clearArticles() {
+    const articlesContainer = document.querySelector('#articles-container');
+    while (articlesContainer.firstChild) {
+        articlesContainer.firstChild.remove();
+    }
+}
+
+function constructUrlToFetchArticles(forUserOnly, orderedBy) {
+    let url = '/article/all'
+
+    if (orderedBy != 'votes') {
+        orderedBy = '_id';
+    }
+
+    if (forUserOnly) {
+        url += '/for?username=' + username + '&orderedBy=votes';
+    } else {
+        url += '?orderedBy=' + orderedBy;
+    }
+
+    return url;
 }
 
 function renderArticles(articles) {
