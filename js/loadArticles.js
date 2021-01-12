@@ -24,13 +24,14 @@ function clearArticles() {
 function constructUrlToFetchArticles(forUserOnly, orderedBy) {
     let url = '/article/all'
 
-    if (orderedBy != 'votes') {
+    if (orderedBy !== 'votes') {
         orderedBy = '_id';
     }
 
     if (forUserOnly) {
-        url += '/for?username=' + username + '&orderedBy=votes';
+        url += '/for?username=' + username + '&orderedBy=' + orderedBy;
     } else {
+        console.log(order)
         url += '?orderedBy=' + orderedBy;
     }
 
