@@ -1,29 +1,18 @@
-window.onload = function (event) {
-    fetch('/article/all', {
-        method: 'GET'
-    }).then(response => {
-        return response.text()
-            .then(function (responseText) {
-                renderArticles(JSON.parse(responseText));
+function loadArticles(forUserOnly) {
+    let url = '/article/all'
+    if (forUserOnly) {
+        url += '/for?username=' + username;
+    }
 
-                // mark voted articles for logged user
-                if (accessToken !== 'null' && username != 'null' && accessToken && username) {
-                    fetch('/user/votedArticleIdsForUser?username=' + username + '&accessToken=' + accessToken, {
-                        method: 'GET'
-                    }).then(response => {
-                        return response.text()
-                            .then(function (responseText) {
-                                const ids = JSON.parse(responseText);
-
-                                for (const articleId of ids.articleIds) {
-                                    const article = document.querySelector('#articleID' + articleId + ' .votes');
-                                    article.classList.add('voted');
-                                }
-                            });
-                    });
-                }
-            });
-    });
+    fetch(url, { method: 'GET' })
+        .then(response => {
+            return response.text()
+                .then(function (responseText) {
+                    const articles = JSON.parse(responseText);
+                    renderArticles(articles);
+                    markUserVotes();
+                });
+        });
 }
 
 function renderArticles(articles) {
@@ -98,5 +87,25 @@ function renderArticles(articles) {
         article.appendChild(articleReveal);
 
         articlesContainer.appendChild(article);
+    }
+}
+
+function markUserVotes() {
+    if (accessToken !== 'null' && username != 'null' && accessToken && username) {
+        fetch('/user/votedArticleIdsForUser?username=' + username + '&accessToken=' + accessToken, { method: 'GET' })
+            .then(response => {
+                return response
+                    .text()
+                    .then(addMarkedClassToClasslist);
+            });
+    }
+}
+
+function addMarkedClassToClasslist(responseText) {
+    const ids = JSON.parse(responseText);
+
+    for (const articleId of ids.articleIds) {
+        const article = document.querySelector('#articleID' + articleId + ' .votes');
+        article.classList.add('voted');
     }
 }
