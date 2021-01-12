@@ -50,14 +50,14 @@ function insertArticle(article) {
     return db.collection('articles').insertOne(article);
 }
 
-function getAllArticles() {
+function getAllArticles(orderedBy) {
     const db = getDb();
-    return db.collection('articles').find({}).sort([['_id', -1]]);
+    return db.collection('articles').find({}).sort([[orderedBy, -1]]);
 }
 
-function getAllArticlesFor(user) {
+function getAllArticlesFor(user, orderedBy) {
     const db = getDb();
-    return db.collection('articles').find({ revealedBy: user }).sort([['_id', -1]]);
+    return db.collection('articles').find({ revealedBy: user }).sort([[orderedBy, -1]]);
 }
 
 function getVotedArticleIdsForUser(username) {
