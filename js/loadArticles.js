@@ -3,7 +3,7 @@ function loadArticles(forUserOnly, orderedBy) {
 
     let url = constructUrlToFetchArticles(forUserOnly, orderedBy);
 
-    fetch(url, { method: 'GET' })
+    return fetch(url, { method: 'GET' })
         .then(response => {
             return response.text()
                 .then(function (responseText) {
@@ -31,7 +31,6 @@ function constructUrlToFetchArticles(forUserOnly, orderedBy) {
     if (forUserOnly) {
         url += '/for?username=' + username + '&orderedBy=' + orderedBy;
     } else {
-        console.log(order)
         url += '?orderedBy=' + orderedBy;
     }
 

@@ -6,4 +6,29 @@ sortBy.addEventListener('change', function () {
     loadArticles(true, this.value);
 });
 
-loadArticles(true, 'most-recent');
+loadArticles(true, 'most-recent')
+    .then(() => {
+        const userArticles = document.querySelectorAll('.article');
+        for (const userArticle of userArticles) {
+            const deleteButton = document.createElement('button');
+            deleteButton.innerHTML = 'Delete';
+            deleteButton.classList.add('delete-button');
+            deleteButton.addEventListener('click', function () {
+                fetch('/article?username=' + username + '&accessToken=' + accessToken, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ articleId: userArticle.id.slice(9) })
+                }).then(() => {
+                    loadArticles(true, 'most-recent');
+                });
+            })
+            userArticle.appendChild(deleteButton);
+        }
+    });
+
+
+
+
