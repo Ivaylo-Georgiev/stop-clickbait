@@ -55,6 +55,11 @@ function getAllArticles() {
     return db.collection('articles').find({}).sort([['_id', -1]]);
 }
 
+function getAllArticlesFor(user) {
+    const db = getDb();
+    return db.collection('articles').find({ revealedBy: user }).sort([['_id', -1]]);
+}
+
 function getVotedArticleIdsForUser(username) {
     const db = getDb();
     return db.collection('usersVotes')
@@ -106,6 +111,7 @@ function voteForArticle(username, articleId) {
 module.exports.createAccount = createAccount;
 module.exports.insertArticle = insertArticle;
 module.exports.getAllArticles = getAllArticles;
+module.exports.getAllArticlesFor = getAllArticlesFor;
 module.exports.getUser = getUser;
 module.exports.getVotedArticleIdsForUser = getVotedArticleIdsForUser;
 module.exports.voteForArticle = voteForArticle;
