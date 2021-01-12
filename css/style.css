@@ -70,6 +70,7 @@ header {
     top: 0;
     background-color: #ffffff;
     border-bottom: 2px solid #000000;
+    z-index: 1000;
 }
 
 header p {
@@ -125,6 +126,7 @@ header {
 }
 
 .article {
+    position: relative;
     width: 280px;
     border: 1px solid #000000;
     margin: 5px;
@@ -238,3 +240,15 @@ footer {
 .header-right {
     padding: 15px;
 }
+
+.delete-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    color: #ffffff;
+    background-color: #eb422b;
+    border: none;
+    padding: 5px;
+    cursor: pointer;
+}
+
