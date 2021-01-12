@@ -21,7 +21,21 @@
     </header>
 
     <main class="feed">
-        <section id="articles-container"></section>
+        <h1>User Articles</h1>
+
+        <div class="centered-content">
+            <p>Sort by: </p>
+            <select name="sort-by" id="sort-by">
+                <option value="most-recent" selected>Most Recent</option>
+                <option value="votes">Votes</option>
+            </select>
+        </div>
+
+        <section id="articles-container">
+
+        </section>
+
+        <a id="reveal-clickbait-button" class="fixed-button">+</a>
     </main>
 
     <script src="/js/urlParams.js"></script>

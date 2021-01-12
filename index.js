@@ -115,7 +115,7 @@ app.post('/article/insert', (req, res) => {
 })
 
 app.get('/article/all', (req, res) => {
-    queries.getAllArticles()
+    queries.getAllArticles(req.query.orderedBy)
         .toArray()
         .then((articles) => res.send(articles))
         .catch(err => {
@@ -125,7 +125,7 @@ app.get('/article/all', (req, res) => {
 })
 
 app.get('/article/all/for', (req, res) => {
-    queries.getAllArticlesFor(req.query.username)
+    queries.getAllArticlesFor(req.query.username, req.query.orderedBy)
         .toArray()
         .then((articles) => res.send(articles))
         .catch(err => {

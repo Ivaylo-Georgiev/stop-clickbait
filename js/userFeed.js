@@ -4,4 +4,9 @@ revealClickbaitButton.setAttribute('href', '/user/revealClickbait?username=' + u
 const profileLink = document.querySelector('#profile-link');
 profileLink.setAttribute('href', '/user/profile?username=' + username + '&accessToken=' + accessToken);
 
-loadArticles(false);
+const sortBy = document.querySelector('#sort-by');
+sortBy.addEventListener('change', function () {
+    loadArticles(false, this.value);
+});
+
+loadArticles(false, 'most-recent');
