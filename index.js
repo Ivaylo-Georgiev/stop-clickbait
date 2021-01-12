@@ -169,6 +169,12 @@ app.put('/article/vote', auth.authenticateJWTQueryString, (req, res) => {
         .then(votes => res.send({ votes: votes }));
 })
 
+app.delete('/article', auth.authenticateJWTQueryString, (req, res) => {
+    const articleId = req.body.articleId;
+    queries.deleteArticle(req.query.username, articleId)
+        .then(() => res.send(`Successfully deleted an article with ID ${articleId}`));
+})
+
 /*
 app.post('/article/getTitle', (req, res) => {
     article.parseArticle(req.body.uri)

@@ -108,6 +108,18 @@ function voteForArticle(username, articleId) {
         });
 }
 
+function deleteArticle(username, articleId) {
+    const db = getDb();
+    let deleteFromArticles = db.collection('articles')
+        .deleteOne({ _id: new mongodb.ObjectID(articleId) });
+    let deleteFromVotes = db.collection('usersVotes')
+        .updateOne(
+            { username: username },
+            { $pull: { articleIds: articleId } }
+        );
+    return Promise.all([deleteFromArticles, deleteFromVotes]);
+}
+
 module.exports.createAccount = createAccount;
 module.exports.insertArticle = insertArticle;
 module.exports.getAllArticles = getAllArticles;
@@ -115,3 +127,4 @@ module.exports.getAllArticlesFor = getAllArticlesFor;
 module.exports.getUser = getUser;
 module.exports.getVotedArticleIdsForUser = getVotedArticleIdsForUser;
 module.exports.voteForArticle = voteForArticle;
+module.exports.deleteArticle = deleteArticle;
