@@ -226,3 +226,12 @@ footer {
     font-size: 12px;
     border-top: 1px solid black;
 }
+
+.row {
+    display: flex;
+    flex-direction: row;
+}
+
+.header-right {
+    padding: 15px;
+}
