@@ -51,6 +51,7 @@ h2, h3, .header-title {
 a {
     color: #eb422b;
     text-decoration: none;
+    cursor: pointer;
 }
 
 .button, form input[type='submit'] {
@@ -188,8 +189,16 @@ form input[type='text'], form input[type='password'] {
     width: 300px;
 }
 
-.warning { 
+.warning, .option {
     font-size: 12px;
+}
+
+.option {
+    padding-left: 2px;
+    padding-right: 2px;
+}
+
+.warning { 
     color: #fce100;
 }
 
