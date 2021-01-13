@@ -20,7 +20,7 @@ function appendDeleteButtons() {
                     'Accept': 'application/json'
                 },
                 body: JSON.stringify({ articleId: userArticle.id.slice(9) })
-            }).then(() => document.querySelector('#' + userArticle.id).parentNode.innerHTML = '');
+            }).then(() => document.querySelector('#' + userArticle.id).remove());
         })
         userArticle.appendChild(deleteButton);
     }
