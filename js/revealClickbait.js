@@ -1,3 +1,9 @@
+const profileLink = document.querySelector('#profile-link');
+profileLink.setAttribute('href', '/user/profile?username=' + username + '&accessToken=' + accessToken);
+
+const feedLink = document.querySelector('#feed-link');
+feedLink.setAttribute('href', '/user/feed?username=' + username + '&accessToken=' + accessToken);
+
 const revealClickbaitForm = document.querySelector('#reveal-clickbait-form');
 revealClickbaitForm.addEventListener('submit', function (event) {
     event.preventDefault();
@@ -62,7 +68,7 @@ function displayClickbaitDetectionWarning(parsedArticle) {
     const main = document.querySelector('main');
     const warning = document.createElement('p');
     warning.classList.add('warning');
-    warning.innerHTML = 'This article was not identified as clickbait by our detector. Of course, we might be wrong. Proceed? ';
+    warning.innerHTML = '⚠️ This article was not identified as clickbait by our detector. Of course, we might be wrong. Proceed? ';
 
     const options = document.createElement('div');
     options.classList.add('row');
