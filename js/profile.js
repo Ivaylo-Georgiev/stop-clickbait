@@ -1,3 +1,6 @@
+const revealClickbaitButton = document.querySelector('#reveal-clickbait-button');
+revealClickbaitButton.setAttribute('href', '/user/revealClickbait?username=' + username + '&accessToken=' + accessToken);
+
 const feedLink = document.querySelector('#feed-link');
 feedLink.setAttribute('href', '/user/feed?username=' + username + '&accessToken=' + accessToken);
 
