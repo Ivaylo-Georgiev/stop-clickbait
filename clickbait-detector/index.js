@@ -138,8 +138,6 @@ function isClickbait(title) {
                         nonClickbaitProbability: nonClickbaitProbability
                     }
 
-                    console.log(probabilities);
-
                     return probabilities;
                 }).then(probabilities => {
                     if (probabilities.clickbaitProbability > probabilities.nonClickbaitProbability) {
