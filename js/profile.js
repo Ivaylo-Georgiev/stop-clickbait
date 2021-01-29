@@ -10,7 +10,7 @@ sortBy.addEventListener('change', function () {
 });
 
 function appendDeleteButtons() {
-    const userArticles = document.querySelectorAll('.article');
+    const userArticles = document.querySelectorAll('revealed-clickbait');
     for (const userArticle of userArticles) {
         const deleteButton = document.createElement('button');
         deleteButton.innerHTML = 'Delete';
@@ -24,7 +24,9 @@ function appendDeleteButtons() {
                 },
                 body: JSON.stringify({ articleId: userArticle.id.slice(9) })
             }).then(() => document.querySelector('#' + userArticle.id).remove());
-        })
+        });
+        deleteButton.slot = 'delete-button';
+
         userArticle.appendChild(deleteButton);
     }
 }
