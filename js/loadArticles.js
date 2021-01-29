@@ -1,3 +1,5 @@
+"use strict";
+
 function loadArticles(forUserOnly, orderedBy) {
     clearArticles();
 

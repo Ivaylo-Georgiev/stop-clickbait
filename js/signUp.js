@@ -1,3 +1,5 @@
+"use strict";
+
 const signUpForm = document.querySelector('#sign-up-form');
 
 signUpForm.addEventListener('submit', function (event) {

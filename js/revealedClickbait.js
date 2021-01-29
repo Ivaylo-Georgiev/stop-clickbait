@@ -1,3 +1,5 @@
+"use strict";
+
 class RevealedClickbait extends HTMLElement {
     constructor() {
         super();

@@ -1,3 +1,5 @@
+"use strict";
+
 let detectClickbaitForm = document.querySelector('#detect-clickbait-form');
 
 detectClickbaitForm.addEventListener('submit', function (event) {

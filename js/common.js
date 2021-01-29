@@ -1,3 +1,5 @@
+"use strict";
+
 const headerTitles = document.querySelectorAll('.header-title');
 
 for (const headerTitle of headerTitles) {
