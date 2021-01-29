@@ -1,3 +1,5 @@
+"use strict";
+
 function loadArticles(forUserOnly, orderedBy) {
     clearArticles();
 
@@ -41,36 +43,35 @@ function renderArticles(articles) {
     for (const articleData of articles) {
         let articlesContainer = document.querySelector('#articles-container');
 
-        let article = document.createElement('div');
-        article.id = 'articleID' + articleData._id;
-        article.classList.add('article');
+        let clickbait = document.createElement('revealed-clickbait');
+        clickbait.id = 'articleID' + articleData._id;
 
         let articleImg = document.createElement('img');
+        articleImg.classList.add('article-image');
         articleImg.setAttribute('src', articleData.imgAddress);
+        articleImg.slot = 'article-image';
 
         let articleTitle = document.createElement('h3');
         articleTitle.classList.add('article-title');
         articleTitle.innerHTML = articleData.title;
+        articleTitle.slot = 'article-title';
 
         let articleReveal = document.createElement('p');
         articleReveal.classList.add('article-reveal');
-        articleReveal.innerHTML = '<span>Reveal by ' + articleData.revealedBy + ': </span>' + articleData.reveal;
+        articleReveal.innerHTML = '<span class="reveal-by">Reveal by ' + articleData.revealedBy + ': </span>' + articleData.reveal;
+        articleReveal.slot = 'article-reveal';
 
-        let articleMeta = document.createElement('div');
-        articleMeta.classList.add('article-meta');
-
-        let articleSourceParagraph = document.createElement('p');
-        articleSourceParagraph.innerHTML = 'Source: ';
         let articleSource = document.createElement('a');
         articleSource.innerHTML = articleData.source;
         articleSource.setAttribute('href', articleData.uri);
         articleSource.setAttribute('target', '_blank');
         articleSource.classList.add('source-link');
-        articleSourceParagraph.appendChild(articleSource);
+        articleSource.slot = 'article-source';
 
         let articleVotes = document.createElement('p');
         articleVotes.innerHTML = articleData.votes + '&#9733;';
         articleVotes.classList.add('votes');
+        articleVotes.slot = 'article-votes';
         articleVotes.addEventListener('click', function (event) {
             fetch('/article/vote?username=' + username + '&accessToken=' + accessToken, {
                 method: 'PUT',
@@ -101,14 +102,13 @@ function renderArticles(articles) {
             });
         })
 
-        articleMeta.appendChild(articleVotes);
-        articleMeta.appendChild(articleSourceParagraph);
-        article.appendChild(articleImg);
-        article.appendChild(articleTitle);
-        article.appendChild(articleMeta);
-        article.appendChild(articleReveal);
+        clickbait.appendChild(articleImg);
+        clickbait.appendChild(articleTitle);
+        clickbait.appendChild(articleReveal);
+        clickbait.appendChild(articleSource);
+        clickbait.appendChild(articleVotes);
 
-        articlesContainer.appendChild(article);
+        articlesContainer.appendChild(clickbait);
     }
 }
 

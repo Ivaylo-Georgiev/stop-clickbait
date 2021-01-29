@@ -49,7 +49,7 @@ h2, h3, .header-title {
 }
 
 a {
-    color: #eb422b;
+    color: #f03a17;
     text-decoration: none;
     cursor: pointer;
 }
@@ -57,9 +57,9 @@ a {
 .button, form input[type='submit'] {
     padding: 5px 20px 5px 20px;
     background-color: transparent;
-    border: 2px solid #eb422b;
+    border: 2px solid #f03a17;
     border-radius: 10px;
-    color: #eb422b;
+    color: #f03a17;
     cursor: pointer;
     margin: 5px;
 }
@@ -110,6 +110,10 @@ header {
     margin: 20px;
 }
 
+.reveal-by {
+    color: #eb422b
+}
+
 .feed {
     display: flex;
     flex-direction: column;
@@ -124,47 +128,6 @@ header {
     flex-wrap: wrap;
     margin: 40px;
     width: 900px;
-}
-
-.article {
-    position: relative;
-    width: 280px;
-    border: 1px solid #000000;
-    margin: 5px;
-}
-
-.article img {
-    width: 100%;
-    height: 200px;
-}
-
-.source-link {
-    display: inline-block;
-    text-align: right;
-    color: #000000;
-    text-decoration: underline;
-    padding: 2px;
-}
-
-.article-title, .article-reveal, .article-meta {
-    margin-left: 20px;
-    margin-right: 20px;
-}
-
-.article-title{
-    margin-top: 20px;
-    margin-bottom: 0;
-}
-
-.article-meta {
-    display: flex;
-    flex-flow: row;
-    justify-content: space-between;
-    font-size: 12px;
-}
-
-.article-reveal span {
-    color: #eb422b;
 }
 
 .red {
@@ -200,18 +163,6 @@ form input[type='text'], form input[type='password'] {
 
 .warning { 
     color: #fce100;
-}
-
-.votes {
-    padding-left: 4px;
-    padding-right: 4px;
-    border: 1px solid black;
-    border-radius: 8px;
-    cursor: pointer;
-}
-
-.votes:hover {
-    border: 1px solid #f03a17;
 }
 
 .fixed-button {
@@ -250,14 +201,5 @@ footer {
     padding: 15px;
 }
 
-.delete-button {
-    position: absolute;
-    top: 0;
-    right: 0;
-    color: #ffffff;
-    background-color: #eb422b;
-    border: none;
-    padding: 5px;
-    cursor: pointer;
-}
+
 

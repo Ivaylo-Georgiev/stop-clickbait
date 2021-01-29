@@ -1,3 +1,5 @@
+"use strict";
+
 const logInForm = document.querySelector('#log-in-form');
 
 logInForm.addEventListener('submit', function (event) {
