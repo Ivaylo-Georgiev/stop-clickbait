@@ -6,13 +6,11 @@ function loadArticles(forUserOnly, orderedBy) {
     let url = constructUrlToFetchArticles(forUserOnly, orderedBy);
 
     return fetch(url, { method: 'GET' })
-        .then(response => {
-            return response.text()
-                .then(function (responseText) {
-                    const articles = JSON.parse(responseText);
-                    renderArticles(articles);
-                    markUserVotes();
-                });
+        .then(getResponseText)
+        .then(responseText => {
+            const articles = JSON.parse(responseText);
+            renderArticles(articles);
+            markUserVotes();
         });
 }
 
@@ -114,12 +112,10 @@ function renderArticles(articles) {
 
 function markUserVotes() {
     if (accessToken !== 'null' && username != 'null' && accessToken && username) {
-        fetch('/user/votedArticleIdsForUser?username=' + username + '&accessToken=' + accessToken, { method: 'GET' })
-            .then(response => {
-                return response
-                    .text()
-                    .then(addMarkedClassToClasslist);
-            });
+        fetch('/user/votedArticleIdsForUser?username=' + username + '&accessToken=' + accessToken,
+            { method: 'GET' })
+            .then(getResponseText)
+            .then(addMarkedClassToClasslist);
     }
 }
 

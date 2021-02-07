@@ -7,3 +7,7 @@ for (const headerTitle of headerTitles) {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 }
+
+function getResponseText(response) {
+    return response.text()
+}

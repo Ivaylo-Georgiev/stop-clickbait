@@ -13,13 +13,11 @@ detectClickbaitForm.addEventListener('submit', function (event) {
             'Accept': 'application/json'
         },
         body: JSON.stringify({ title: title })
-    }).then(response => {
-        return response.text()
-            .then(function (responseText) {
-                displayDetectionResults(title, responseText === 'true');
-            });
-    });
-})
+    })
+        .then(getResponseText)
+        .then(responseText => displayDetectionResults(title, responseText === 'true'));
+});
+
 
 function displayDetectionResults(title, isClickbait) {
     detectClickbaitForm.remove();

@@ -26,9 +26,7 @@ revealClickbaitForm.addEventListener('submit', function (event) {
         })
     })
         .then(getResponseText)
-        .then(function (responseText) {
-            detectClickbait(responseText);
-        });
+        .then(responseText => detectClickbait(responseText));
 });
 
 function detectClickbait(parsedArticle) {
@@ -102,6 +100,3 @@ function displayClickbaitDetectionWarning(parsedArticle) {
     main.appendChild(options);
 }
 
-function getResponseText(response) {
-    return response.text()
-}
