@@ -2,22 +2,29 @@
 
 let detectClickbaitForm = document.querySelector('#detect-clickbait-form');
 
-detectClickbaitForm.addEventListener('submit', function (event) {
+detectClickbaitForm.addEventListener('submit', detectClickbait);
+
+function detectClickbait(event) {
     event.preventDefault();
     let title = document.querySelector('#detect-clickbait-form input[type=text]').value;
 
-    fetch('./article/isClickbait', {
+    fetchIsClickbait(title)
+        .then(getResponseText)
+        .then(responseText => displayDetectionResults(title, responseText === 'true'));
+}
+
+function fetchIsClickbait(title) {
+    return fetch('./article/isClickbait', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json'
         },
-        body: JSON.stringify({ title: title })
-    })
-        .then(getResponseText)
-        .then(responseText => displayDetectionResults(title, responseText === 'true'));
-});
-
+        body: JSON.stringify({
+            title: title
+        })
+    });
+}
 
 function displayDetectionResults(title, isClickbait) {
     detectClickbaitForm.remove();

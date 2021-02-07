@@ -2,7 +2,6 @@
 
 function loadArticles(forUserOnly, orderedBy) {
     clearArticles();
-
     let url = constructUrlToFetchArticles(forUserOnly, orderedBy);
 
     return fetch(url, { method: 'GET' })
@@ -71,33 +70,8 @@ function renderArticles(articles) {
         articleVotes.classList.add('votes');
         articleVotes.slot = 'article-votes';
         articleVotes.addEventListener('click', function (event) {
-            fetch('/article/vote?username=' + username + '&accessToken=' + accessToken, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify({
-                    articleId: articleData._id
-                })
-            }).then(response => {
-                if (response.status === 200) {
-                    return response.text()
-                        .then(function (responseText) {
-                            const updatedVotes = JSON.parse(responseText).votes;
-                            articleVotes.innerHTML = JSON.parse(responseText).votes + '&#9733;';
-                            if (articleData.votes < updatedVotes) {
-                                articleVotes.classList.add('voted');
-                            } else {
-                                articleVotes.classList.remove('voted');
-                            }
-                        });
-                } else if (response.status === 401) {
-                    window.location.href = '/unauthorized';
-                } else if (response.status === 403) {
-                    window.location.href.href = '/fobidden';
-                }
-            });
+            fetchVotes(articleData._id)
+                .then(response => handleFetchVotesStatus(response, articleVotes, articleData));
         })
 
         clickbait.appendChild(articleImg);
@@ -110,13 +84,53 @@ function renderArticles(articles) {
     }
 }
 
+function fetchVotes(articleId) {
+    return fetch('/article/vote?username=' + username + '&accessToken=' + accessToken, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+            articleId: articleId
+        })
+    });
+}
+
+function handleFetchVotesStatus(response, articleVotes, articleData) {
+    if (response.status === 200) {
+        return response
+            .text()
+            .then(responseText => voteForArticle(responseText, articleVotes, articleData));
+    } else if (response.status === 401) {
+        window.location.href = '/unauthorized';
+    } else if (response.status === 403) {
+        window.location.href.href = '/fobidden';
+    }
+}
+
+function voteForArticle(responseText, articleVotes, articleData) {
+    const updatedVotes = JSON.parse(responseText).votes;
+    articleVotes.innerHTML = JSON.parse(responseText).votes + '&#9733;';
+    if (articleData.votes < updatedVotes) {
+        articleVotes.classList.add('voted');
+    } else {
+        articleVotes.classList.remove('voted');
+    }
+}
+
 function markUserVotes() {
     if (accessToken !== 'null' && username != 'null' && accessToken && username) {
-        fetch('/user/votedArticleIdsForUser?username=' + username + '&accessToken=' + accessToken,
-            { method: 'GET' })
+        fetchVotedArticleIdsForUser()
             .then(getResponseText)
             .then(addMarkedClassToClasslist);
     }
+}
+
+function fetchVotedArticleIdsForUser() {
+    return fetch('/user/votedArticleIdsForUser?username=' + username + '&accessToken=' + accessToken, {
+        method: 'GET'
+    });
 }
 
 function addMarkedClassToClasslist(responseText) {

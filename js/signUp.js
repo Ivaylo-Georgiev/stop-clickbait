@@ -7,48 +7,9 @@ signUpForm.addEventListener('submit', function (event) {
     const username = document.querySelector('#username-input').value;
     const password = document.querySelector('#password-input').value;
 
-    const warnings = document.querySelectorAll('.warning');
-    for (const warning of warnings) {
-        warning.remove();
-    }
+    clearWarnings();
 
-    fetch('./user/signUp', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-            username: username,
-            password: password
-        })
-    })
+    fetchSignUp(username, password)
         .then(getResponseText)
-        .then(responseText => {
-            if (!JSON.parse(responseText).username) {
-                signUpForm.reset();
-                let invalidUsernameWarning = document.createElement('p');
-                invalidUsernameWarning.classList.add('warning');
-                invalidUsernameWarning.innerHTML = `⚠️ Invalid username: ${username} already exists`;
-                signUpForm.appendChild(invalidUsernameWarning);
-            } else {
-                fetch('./user/logIn', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        username: username,
-                        password: password
-                    })
-                })
-                    .then(getResponseText)
-                    .then(responseText => {
-                        const username = JSON.parse(responseText).username;
-                        const accessToken = JSON.parse(responseText).accessToken;
-                        window.location.replace('/user/feed?username=' + username + '&accessToken=' + accessToken);
-                    });
-            }
-        });
+        .then(responseText => signUp(responseText, username, password));
 });

@@ -55,3 +55,10 @@ function signUp(responseText, username, password) {
             .then(logIn);
     }
 }
+
+function clearWarnings() {
+    const warnings = document.querySelectorAll('.warning');
+    for (const warning of warnings) {
+        warning.remove();
+    }
+}
