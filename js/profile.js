@@ -18,19 +18,26 @@ function appendDeleteButtons() {
         deleteButton.innerHTML = 'Delete';
         deleteButton.classList.add('delete-button');
         deleteButton.addEventListener('click', function () {
-            fetch('/article?username=' + username + '&accessToken=' + accessToken, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify({ articleId: userArticle.id.slice(9) })
-            }).then(() => document.querySelector('#' + userArticle.id).remove());
+            fetchDeleteArticle(userArticle.id.slice(9))
+                .then(() => document.querySelector('#' + userArticle.id).remove());
         });
         deleteButton.slot = 'delete-button';
 
         userArticle.appendChild(deleteButton);
     }
+}
+
+function fetchDeleteArticle(articleId) {
+    return fetch('/article?username=' + username + '&accessToken=' + accessToken, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+            articleId: articleId
+        })
+    });
 }
 
 loadArticles(true, 'most-recent')
