@@ -32,7 +32,8 @@ function fetchDeleteArticle(articleId) {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
-            'Accept': 'application/json'
+            'Accept': 'application/json',
+            'Cache-Control': 'no-store'
         },
         body: JSON.stringify({
             articleId: articleId

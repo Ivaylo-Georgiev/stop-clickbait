@@ -89,7 +89,8 @@ function fetchVotes(articleId) {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
-            'Accept': 'application/json'
+            'Accept': 'application/json',
+            'Cache-Control': 'no-store'
         },
         body: JSON.stringify({
             articleId: articleId
@@ -129,7 +130,10 @@ function markUserVotes() {
 
 function fetchVotedArticleIdsForUser() {
     return fetch('/user/votedArticleIdsForUser?username=' + username + '&accessToken=' + accessToken, {
-        method: 'GET'
+        method: 'GET',
+        headers: {
+            'Cache-Control': 'no-store'
+        }
     });
 }
 
