@@ -87,20 +87,20 @@ app.post('/user/logIn', (req, res) => {
 })
 
 app.get('/user/feed', auth.authenticateJWTQueryString, function (req, res) {
-    res.sendFile(path.join(__dirname, '/html/userFeed.html'));
+    res.header('Cache-Control', 'private').sendFile(path.join(__dirname, '/html/userFeed.html'));
 })
 
 app.get('/user/profile', auth.authenticateJWTQueryString, function (req, res) {
-    res.sendFile(path.join(__dirname, '/html/profile.html'));
+    res.header('Cache-Control', 'private').sendFile(path.join(__dirname, '/html/profile.html'));
 })
 
 app.get('/user/revealClickbait', auth.authenticateJWTQueryString, function (req, res) {
-    res.sendFile(path.join(__dirname, '/html/revealClickbait.html'));
+    res.header('Cache-Control', 'private').sendFile(path.join(__dirname, '/html/revealClickbait.html'));
 })
 
 app.get('/user/votedArticleIdsForUser', auth.authenticateJWTQueryString, (req, res) => {
     queries.getVotedArticleIdsForUser(req.query.username)
-        .then(ids => res.send({ articleIds: ids }));
+        .then(ids => res.header('Cache-Control', 'private').send({ articleIds: ids }));
 })
 
 // ARTICLE
@@ -166,44 +166,14 @@ app.post('/article/isClickbait', (req, res) => {
 app.put('/article/vote', auth.authenticateJWTQueryString, (req, res) => {
     const articleId = req.body.articleId;
     queries.voteForArticle(req.query.username, articleId)
-        .then(votes => res.send({ votes: votes }));
+        .then(votes => res.header('Cache-Control', 'private').send({ votes: votes }));
 })
 
 app.delete('/article', auth.authenticateJWTQueryString, (req, res) => {
     const articleId = req.body.articleId;
     queries.deleteArticle(req.query.username, articleId)
-        .then(() => res.send(`Successfully deleted an article with ID ${articleId}`));
+        .then(() => res.header('Cache-Control', 'private').send(`Successfully deleted an article with ID ${articleId}`));
 })
-
-/*
-app.post('/article/getTitle', (req, res) => {
-    article.parseArticle(req.body.uri)
-        .then(parsedArticle => res.send(parsedArticle.title))
-        .catch(err => console.error(`Could not get the title of article: ${err}`));
-    //article.getTitlePromise(req.body.uri).then(title => res.send(JSON.stringify(`{ title: ${title} }`)));
-})
-
-app.post('/article/getThumbnail', (req, res) => {
-    article.parseArticle(req.body.uri)
-        .then(parsedArticle => res.send(parsedArticle.image))
-        .catch(err => console.error(`Could not get the thumbnail of article: ${err}`));
-    //article.getThumbnailURLPromise(req.body.uri).then(thumbnailURL => res.send(JSON.stringify(`{ thumbnailURL: ${title} }`)));
-})
-
-app.post('/article/getThumbnail', (req, res) => {
-    article.parseArticle(req.body.uri)
-        .then(parsedArticle => res.send(parsedArticle.image))
-        .catch(err => console.error(`Could not get the thumbnail of article: ${err}`));
-    //article.getThumbnailURLPromise(req.body.uri).then(thumbnailURL => res.send(JSON.stringify(`{ thumbnailURL: ${title} }`)));
-})
-
-app.post('/article/getSource', (req, res) => {
-    article.parseArticle(req.body.uri)
-        .then(parsedArticle => res.send(parsedArticle.source))
-        .catch(err => console.error(`Could not get the source of article: ${err}`));
-    //article.getThumbnailURLPromise(req.body.uri).then(thumbnailURL => res.send(JSON.stringify(`{ thumbnailURL: ${title} }`)));
-})
-*/
 
 db.connect().then(() => {
     app.listen(process.env.APPLICATION_PORT, function () {
