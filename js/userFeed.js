@@ -5,6 +5,7 @@ revealClickbaitButton.setAttribute('href', '/user/revealClickbait?username=' + u
 
 const profileLink = document.querySelector('#profile-link');
 profileLink.setAttribute('href', '/user/profile?username=' + username + '&accessToken=' + accessToken);
+profileLink.innerHTML = username;
 
 const sortBy = document.querySelector('#sort-by');
 sortBy.addEventListener('change', function () {

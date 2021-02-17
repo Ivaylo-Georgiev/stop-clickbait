@@ -2,6 +2,7 @@
 
 const profileLink = document.querySelector('#profile-link');
 profileLink.setAttribute('href', '/user/profile?username=' + username + '&accessToken=' + accessToken);
+profileLink.innerHTML = username;
 
 const feedLink = document.querySelector('#feed-link');
 feedLink.setAttribute('href', '/user/feed?username=' + username + '&accessToken=' + accessToken);
