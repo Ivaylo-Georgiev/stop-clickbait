@@ -128,6 +128,8 @@ function addMarkedClassToClasslist(responseText) {
 
     for (const articleId of ids.articleIds) {
         const article = document.querySelector('#articleID' + articleId + ' .votes');
-        article.classList.add('voted');
+        if (article != null) {
+            article.classList.add('voted');
+        }
     }
 }
