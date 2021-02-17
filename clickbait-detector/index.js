@@ -6,9 +6,11 @@ const stopwordsDataSource = 'resources/datasets/stopwords';
 
 function extractStopwords() {
     return fs.promises.readFile(stopwordsDataSource, 'utf8')
-        .then(stopwordsData => {
-            return stopwordsData.split('\r\n');
-        });
+        .then(splitStopwords);
+}
+
+function splitStopwords(stopwordsData) {
+    return stopwordsData.split('\r\n');
 }
 
 function clean(word) {
@@ -29,48 +31,52 @@ function clean(word) {
 
 function extractClickbaitData(stopwords) {
     return fs.promises.readFile(clickbaitDataSource, 'utf8')
-        .then(clickbaitData => {
-            let clickbaitWordsFrequency = {};
-            const words = clickbaitData.toLowerCase().split(/[\n ]+/);
-            words.forEach(function (word) {
-                if (stopwords.includes(word)) {
-                    return;
-                }
+        .then(clickbaitData => increaseClickbaitFrequency(clickbaitData, stopwords));
+}
 
-                word = clean(word);
+function increaseClickbaitFrequency(clickbaitData, stopwords) {
+    let clickbaitWordsFrequency = {};
+    const words = clickbaitData.toLowerCase().split(/[\n ]+/);
+    words.forEach(function (word) {
+        if (stopwords.includes(word)) {
+            return;
+        }
 
-                if (clickbaitWordsFrequency[word]) {
-                    ++clickbaitWordsFrequency[word];
-                } else {
-                    clickbaitWordsFrequency[word] = 1;
-                }
-            });
+        word = clean(word);
 
-            return clickbaitWordsFrequency;
-        });
+        if (clickbaitWordsFrequency[word]) {
+            ++clickbaitWordsFrequency[word];
+        } else {
+            clickbaitWordsFrequency[word] = 1;
+        }
+    });
+
+    return clickbaitWordsFrequency;
 }
 
 function extractNonClickbaitData(stopwords) {
     return fs.promises.readFile(nonClickbaitDataSource, 'utf8')
-        .then(nonClickbaitData => {
-            let nonClickbaitWordsFrequency = {};
-            const words = nonClickbaitData.toLowerCase().split(/[\n ]+/);
-            words.forEach(function (word) {
-                if (stopwords.includes(word)) {
-                    return;
-                }
+        .then(nonClickbaitData => increaseNonClickbaitFrequency(nonClickbaitData, stopwords));
+}
 
-                word = clean(word);
+function increaseNonClickbaitFrequency(nonClickbaitData, stopwords) {
+    let nonClickbaitWordsFrequency = {};
+    const words = nonClickbaitData.toLowerCase().split(/[\n ]+/);
+    words.forEach(function (word) {
+        if (stopwords.includes(word)) {
+            return;
+        }
 
-                if (nonClickbaitWordsFrequency[word]) {
-                    ++nonClickbaitWordsFrequency[word];
-                } else {
-                    nonClickbaitWordsFrequency[word] = 1;
-                }
-            });
+        word = clean(word);
 
-            return nonClickbaitWordsFrequency;
-        });
+        if (nonClickbaitWordsFrequency[word]) {
+            ++nonClickbaitWordsFrequency[word];
+        } else {
+            nonClickbaitWordsFrequency[word] = 1;
+        }
+    });
+
+    return nonClickbaitWordsFrequency;
 }
 
 function countWords(wordsData) {
@@ -97,7 +103,6 @@ function calcClickbaitProbability(words, clickbaitFrequency, nonClickbaitFrequen
     return titleClickbaitProbability * (clickbaitWordsCount / totalWordsCount);
 }
 
-
 function calcNonClickbaitProbability(words, nonClickbaitFrequency, clickbaitFrequency, nonClickbaitWordsCount, totalWordsCount) {
     let titleNonClickbaitProbability = 1;
     for (let word of words) {
@@ -120,35 +125,37 @@ function isClickbait(title) {
             const nonClickbaitData = extractNonClickbaitData(stopwords);
 
             return Promise.all([clickbaitData, nonClickbaitData])
-                .then(frequencies => {
-                    const clickbaitFrequency = frequencies[0];
-                    const nonClickbaitFrequency = frequencies[1];
+                .then(frequencies => calcProbabilitiesFromFrequencies(frequencies, title))
+                .then(compareProbabilities);
+        });
+}
 
-                    const clickbaitWordsCount = countWords(clickbaitFrequency);
-                    const nonClickbaitWordsCount = countWords(nonClickbaitFrequency);
-                    const totalWordsCount = clickbaitWordsCount + nonClickbaitWordsCount;
+function calcProbabilitiesFromFrequencies(frequencies, title) {
+    const clickbaitFrequency = frequencies[0];
+    const nonClickbaitFrequency = frequencies[1];
 
-                    const words = title.toLowerCase().split(' ');
+    const clickbaitWordsCount = countWords(clickbaitFrequency);
+    const nonClickbaitWordsCount = countWords(nonClickbaitFrequency);
+    const totalWordsCount = clickbaitWordsCount + nonClickbaitWordsCount;
 
-                    let clickbaitProbability = calcClickbaitProbability(words, clickbaitFrequency, nonClickbaitFrequency, clickbaitWordsCount, totalWordsCount);
-                    let nonClickbaitProbability = calcNonClickbaitProbability(words, nonClickbaitFrequency, clickbaitFrequency, nonClickbaitWordsCount, totalWordsCount);
+    const words = title.toLowerCase().split(' ');
 
-                    const probabilities = {
-                        clickbaitProbability: clickbaitProbability,
-                        nonClickbaitProbability: nonClickbaitProbability
-                    }
+    let clickbaitProbability = calcClickbaitProbability(words, clickbaitFrequency, nonClickbaitFrequency, clickbaitWordsCount, totalWordsCount);
+    let nonClickbaitProbability = calcNonClickbaitProbability(words, nonClickbaitFrequency, clickbaitFrequency, nonClickbaitWordsCount, totalWordsCount);
 
-                    return probabilities;
-                }).then(probabilities => {
-                    if (probabilities.clickbaitProbability > probabilities.nonClickbaitProbability) {
-                        return true;
-                    }
-                    return false;
-                });
-        })
+    const probabilities = {
+        clickbaitProbability: clickbaitProbability,
+        nonClickbaitProbability: nonClickbaitProbability
+    }
 
+    return probabilities;
+}
 
-
+function compareProbabilities(probabilities) {
+    if (probabilities.clickbaitProbability > probabilities.nonClickbaitProbability) {
+        return true;
+    }
+    return false;
 }
 
 module.exports.isClickbait = isClickbait;

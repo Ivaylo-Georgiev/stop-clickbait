@@ -12,7 +12,13 @@ revealClickbaitForm.addEventListener('submit', function (event) {
     const address = document.querySelector('#article-link').value;
     const shortReveal = document.querySelector('#clickbait-reveal').value;
 
-    fetch('/article/parse', {
+    fetchParseArticle(address, shortReveal)
+        .then(getResponseText)
+        .then(detectClickbait);
+});
+
+function fetchParseArticle(address, shortReveal) {
+    return fetch('/article/parse', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -24,22 +30,11 @@ revealClickbaitForm.addEventListener('submit', function (event) {
             votes: 0,
             revealedBy: username
         })
-    })
-        .then(getResponseText)
-        .then(function (responseText) {
-            detectClickbait(responseText);
-        });
-});
+    });
+}
 
 function detectClickbait(parsedArticle) {
-    fetch('/article/isClickbait', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        },
-        body: parsedArticle
-    })
+    fetchIsClickbait(parsedArticle)
         .then(getResponseText)
         .then(isClickbait => {
             if (isClickbait === 'true') {
@@ -50,16 +45,31 @@ function detectClickbait(parsedArticle) {
         });
 }
 
+function fetchIsClickbait(parsedArticle) {
+    return fetch('/article/isClickbait', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: parsedArticle
+    });
+}
+
 function insertArticle(article) {
-    fetch('/article/insert', {
+    fetchInsertArticle(article)
+        .then(relocateToFeed);
+}
+
+function fetchInsertArticle(article) {
+    return fetch('/article/insert', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json'
         },
         body: article
-    })
-        .then(relocateToFeed);
+    });
 }
 
 function relocateToFeed() {
@@ -100,8 +110,4 @@ function displayClickbaitDetectionWarning(parsedArticle) {
 
     main.appendChild(warning);
     main.appendChild(options);
-}
-
-function getResponseText(response) {
-    return response.text()
 }
