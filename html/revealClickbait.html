@@ -27,9 +27,13 @@
         <form id="reveal-clickbait-form">
             <h1>Reveal Clickbait</h1>
             <label for="article-link">Please, fill in the link of the article: </label>
-            <input id="article-link" name="article-link" type="text">
+            <input id="article-link" name="article-link" type="text"
+                title="Specify a valid URL, starting with 'http://' or 'https://'"
+                pattern="https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)"
+                required>
             <label for="clickbait-reveal">Please, fill in a short reveal: </label>
-            <input id="clickbait-reveal" name="clickbait-reveal" type="text">
+            <input id="clickbait-reveal" name="clickbait-reveal" type="text" maxlength="70"
+                title="Specify a reveal no longer than 70 characters" required>
             <input value="Reveal" type="submit">
         </form>
     </main>
