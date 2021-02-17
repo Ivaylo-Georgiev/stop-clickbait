@@ -23,8 +23,7 @@ function fetchParseArticle(address, shortReveal) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'Cache-Control': 'no-store'
+            'Accept': 'application/json'
         },
         body: JSON.stringify({
             uri: address,
@@ -64,11 +63,12 @@ function insertArticle(article) {
 }
 
 function fetchInsertArticle(article) {
-    return fetch('/article/insert', {
+    return fetch('/article/insert?username=' + username + '&accessToken=' + accessToken, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Accept': 'application/json'
+            'Accept': 'application/json',
+            'Cache-Control': 'no-store'
         },
         body: article
     });

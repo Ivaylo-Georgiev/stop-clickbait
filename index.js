@@ -104,7 +104,7 @@ app.get('/user/votedArticleIdsForUser', auth.authenticateJWTQueryString, (req, r
 })
 
 // ARTICLE
-app.post('/article/insert', (req, res) => {
+app.post('/article/insert', auth.authenticateJWTQueryString, (req, res) => {
     let article = req.body;
     queries.insertArticle(article)
         .then(() => res.send(`Inserted an article: ${article.uri}`))
